@@ -12,9 +12,9 @@ from transformers import BertTokenizer
 
 
 class SentencePairDataset(Dataset):
-    def __init__(self, data, max_seq_length=128):
+    def __init__(self, data, max_seq_length=512):
         self.data = data
-        self.tokenizer = BertTokenizer.from_pretrained('chinese-roberta-wwm-ext')
+        self.tokenizer = BertTokenizer.from_pretrained('./pretrained_models')
         self.max_seq_length = max_seq_length
 
     def __len__(self):
@@ -25,11 +25,10 @@ class SentencePairDataset(Dataset):
         tokens = tokens[:self.max_seq_length - 2]
         return tokens
 
-    def _get_input_features(self, sentence1, sentence2):
+    def _get_input_features(self, sentence1):
         tokens1 = self._tokenize(sentence1)
-        tokens2 = self._tokenize(sentence2)
 
-        input_ids = self.tokenizer.convert_tokens_to_ids(['[CLS]'] + tokens1 + ['[SEP]'] + tokens2 + ['[SEP]'])
+        input_ids = self.tokenizer.convert_tokens_to_ids(['[CLS]'] + tokens1 + ['[SEP]'])
         attention_mask = [1] * len(input_ids)
 
         padding_length = self.max_seq_length - len(input_ids)
@@ -43,5 +42,6 @@ class SentencePairDataset(Dataset):
 
     def __getitem__(self, idx):
         sentence1, sentence2, label = self.data[idx]
-        input_features = self._get_input_features(sentence1, sentence2)
-        return input_features, torch.tensor(label, dtype=torch.long)
+        input_features1 = self._get_input_features(sentence1)
+        input_features2 = self._get_input_features(sentence2)
+        return input_features1, input_features2, torch.tensor(label, dtype=torch.long)

@@ -36,7 +36,7 @@ def load_data(filepath):
             if not line:
                 continue
             sentence1, sentence2, label = line.split("\t")
-            data.append((sentence1, sentence2, label))
+            data.append((sentence1, sentence2, int(label)))
     return SentencePairDataset(data)
 
 
@@ -45,14 +45,14 @@ def main():
     args = parser.parse_args()
 
     config = read_config(args.config_file)
-    num_classes = config.num_classes
-    train_file = config.train_file
-    val_file = config.val_file
-    lr = config.lr
-    model_path = config.model_path
-    logger_path = config.logger_path
-    num_epochs = config.num_epochs
-    patience = config.patience
+    num_classes = config['num_classes']
+    train_file = config['train_file']
+    val_file = config['val_file']
+    lr = float(config['lr'])
+    model_path = config['model_path']
+    logger_path = config['logger_path']
+    num_epochs = int(config['num_epochs'])
+    patience = int(config['patience'])
 
     # set logger path
     fh = logging.FileHandler(logger_path)
@@ -61,7 +61,7 @@ def main():
     logger.addHandler(fh)
 
     train_data = load_data(train_file)
-    train_dataloader = DataLoader(train_data, batch_size=32, shuffle=True)
+    train_dataloader = DataLoader(train_data, batch_size=4, shuffle=True)
     val_data = load_data(val_file)
     val_dataloader = DataLoader(val_data, batch_size=32, shuffle=False)
 

@@ -1,0 +1,10 @@
+{
+    "num_classes": 5,
+    "train_file": "data/train.csv",
+    "val_file": "data/val.csv",
+    "lr": 1e-5,
+    "model_path": "model",
+    "logger_path": "logs/train_log.txt",
+    "num_epochs": 20,
+    "patience": 3
+}
